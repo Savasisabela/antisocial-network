@@ -1,6 +1,7 @@
-import React from "react";
+import React, { Component } from "react";
+import { Link } from "react-router-dom";
 
-export default class Registration extends React.Component {
+export default class Registration extends Component {
     constructor(props) {
         super(props);
         this.state = {};
@@ -42,7 +43,7 @@ export default class Registration extends React.Component {
 
     render() {
         return (
-            <div>
+            <>
                 <h3>Sign Up!</h3>
                 {this.state.error && <div className="error">Oops!</div>}
                 <input
@@ -68,7 +69,8 @@ export default class Registration extends React.Component {
                     placeholder="insert your password"
                 />
                 <button onClick={() => this.submit()}>Submit</button>
-            </div>
+                <Link to="/login">Click here to login</Link>
+            </>
         );
     }
 }

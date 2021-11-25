@@ -1,12 +1,26 @@
 import Registration from "./registration";
+import Login from "./login";
+import Reset from "./reset-password";
+import { BrowserRouter, Route } from "react-router-dom";
 
 export default function Welcome() {
-    const myElem = <h1>WELCOME</h1>;
-
     return (
         <>
-            {myElem}
-            <Registration></Registration>
+            <BrowserRouter>
+                <h1>WELCOME TO</h1>
+                <img src="/logo.png" alt="logo" />
+                <div>
+                    <Route exact path="/">
+                        <Registration />
+                    </Route>
+                    <Route path="/login">
+                        <Login />
+                    </Route>
+                    <Route path="/password/reset">
+                        <Reset />
+                    </Route>
+                </div>
+            </BrowserRouter>
         </>
     );
 }

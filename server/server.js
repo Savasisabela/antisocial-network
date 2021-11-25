@@ -7,6 +7,39 @@ const path = require("path");
 const cookieSession = require("cookie-session");
 const secret = require("./secrets.json").secret;
 const { requireNotLoggedIn } = require("./middleware/authorization.js");
+const cryptoRandomString = require("crypto-random-string");
+
+const multer = require("multer");
+const uidSafe = require("uid-safe");
+const s3 = require("./s3");
+
+const diskStorage = multer.diskStorage({
+    destination: function (req, file, callback) {
+        callback(null, __dirname + "/uploads");
+    },
+    filename: function (req, file, callback) {
+        uidSafe(24).then(function (uid) {
+            callback(null, uid + path.extname(file.originalname));
+        });
+    },
+});
+
+const { sendEmail } = require("./ses.js");
+
+const uploader = multer({
+    storage: diskStorage,
+    limits: {
+        fileSize: 2097152,
+    },
+});
+
+const fileSizeLimitErrorHandler = (err, req, res, next) => {
+    if (err) {
+        return res.json({ fileTooBig: true });
+    } else {
+        next();
+    }
+};
 
 app.use(compression());
 
@@ -54,6 +87,96 @@ app.post("/registration.json", requireNotLoggedIn, (req, res) => {
             console.log("err in registration password hash", err);
         });
 });
+
+app.post("/login.json", requireNotLoggedIn, (req, res) => {
+    const { email, password } = req.body;
+    db.getUserByEmail(email)
+        .then((data) => {
+            const dataPw = data.rows[0].password;
+            const inputPw = password;
+
+            compare(inputPw, dataPw).then((match) => {
+                if (match) {
+                    req.session.userId = data.rows[0].id;
+                    return res.json({ success: true });
+                } else {
+                    console.log("wrong password");
+                    return res.json({ success: false });
+                }
+            });
+        })
+        .catch((err) => {
+            console.log("error on post in login:", err);
+            console.log("wrong email");
+            return res.json({ success: false });
+        });
+});
+
+app.post("/password/getcode", (req, res) => {
+    const code = cryptoRandomString({
+        length: 6,
+    });
+    const { email } = req.body;
+    console.log("email", email);
+    db.checkForUser(email)
+        .then((data) => {
+            console.log("data", data);
+            if (data.rows[0].count > 0) {
+                db.storeCode(email, code).then(() => {
+                    sendEmail(
+                        `${email}`,
+                        "Your code to reset password",
+                        `Reset you password with this code ${code}.
+                            This code will expire in 10 minutes.`
+                    );
+                });
+            }
+            return res.json({ success: true });
+        })
+        .catch((err) => {
+            console.log("error on post to /password/reset", err);
+            return res.json({ success: true });
+        });
+});
+
+app.post("/password/reset", (req, res) => {
+    const { code, password, email } = req.body;
+
+    db.getCode(code, email).then((data) => {
+        if (data.rows.length) {
+            hash(password).then((hasedPw) => {
+                db.setNewPassword(hasedPw, email)
+                    .then(() => res.json({ success: true }))
+                    .catch((err) => {
+                        console.log("error on setNewPassword", err);
+                        return res.json({ success: false });
+                    });
+            });
+        } else {
+            res.json({ success: false });
+        }
+    });
+});
+
+app.post(
+    "/profile/upload",
+    uploader.single("file"),
+    fileSizeLimitErrorHandler,
+    s3.upload,
+    (req, res) => {
+        console.log("req.file", req.file);
+        if (req.file) {
+            const url = `https://s3.amazonaws.com/spicedling/${req.file.filename}`;
+            db.addProfilePic(url)
+                .then(({ rows }) => res.json(rows[0]))
+                .catch((err) => console.log("error on addProfilePic:", err));
+        } else {
+            res.json({
+                success: false,
+            });
+        }
+    }
+);
 
 app.get("*", function (req, res) {
     res.sendFile(path.join(__dirname, "..", "client", "index.html"));

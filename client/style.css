@@ -1,3 +1,78 @@
+@import url("https://fonts.googleapis.com/css2?family=Smythe&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Special+Elite&display=swap");
+
+* {
+    font-family: "Special Elite", cursive;
+}
+
 body {
-    background-color: aquamarine;
+    bottom: 0;
+    background-image: url("https://cdn.hovia.com/app/uploads/70s-bold-multicolor-stripes-retro-wallpaper-mural-Plain-scaled.jpg");
+    height: 100vh;
+    width: 100vw;
+    margin: 0;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: left bottom;
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    background-color: burlywood;
+}
+
+h1 {
+    font-family: "Smythe", cursive;
+    text-transform: lowercase;
+    color: brown;
+    text-shadow: #fc0 3px 3px 0;
+    font-size: 8rem;
+    text-align: center;
+}
+
+.profilepic {
+    height: 100px;
+    cursor: pointer;
+}
+
+.applogo {
+    height: 100px;
+    cursor: pointer;
+}
+
+.popup-uploader-bg {
+    overflow-y: hidden;
+    display: flex;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(
+        70deg,
+        rgba(255, 157, 0, 0.6),
+        rgba(0, 255, 34, 0.6)
+    );
+    height: 100%;
+    justify-content: center;
+    align-items: center;
+}
+
+.popup-uploader {
+    z-index: 1;
+    background: linear-gradient(
+        70deg,
+        rgb(166, 211, 61) 10%,
+        rgb(199, 123, 72) 50%,
+        rgb(118, 96, 243)
+    );
+    border: rgb(255, 123, 0) inset 10px;
+    border-radius: 5px;
+    width: 40%;
+    height: 60%;
+    display: flex;
+    flex-direction: column;
+    align-content: center;
+    justify-content: space-between;
 }
