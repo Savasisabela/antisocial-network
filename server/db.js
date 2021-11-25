@@ -25,6 +25,13 @@ module.exports.getUserByEmail = (userEmail) => {
     return db.query(q, params);
 };
 
+module.exports.getUserById = (userId) => {
+    const q = `SELECT picture_url, first, last FROM users 
+               WHERE id = $1`;
+    const params = [userId];
+    return db.query(q, params);
+};
+
 module.exports.checkForUser = (userEmail) => {
     const q = `SELECT COUNT(1) 
                FROM users 
@@ -59,7 +66,11 @@ module.exports.setNewPassword = (password, email) => {
     return db.query(q, params);
 };
 
-module.exports.addProfilePic = (url) => {
-    const q = `INSERT INTO users 
-               `;
+module.exports.addProfilePic = ({ url, userId }) => {
+    const q = `UPDATE users 
+               SET picture_url = $1
+               WHERE id = $2
+               RETURNING picture_url`;
+    const params = [url, userId];
+    return db.query(q, params);
 };

@@ -13,7 +13,19 @@ export default class App extends Component {
 
     componentDidMount() {
         console.log("App component mounted");
-        // Make a fetch request to get datafor currently logged in user
+        fetch("/profile.json")
+            .then((data) => data.json())
+            .then((data) => {
+                console.log("data in fetch profile", data[0]);
+                this.setState({
+                    first: data[0].first,
+                    last: data[0].last,
+                    imageUrl: data[0]["picture_url"],
+                });
+            })
+            .catch((err) => {
+                console.log("error fetching profile from server:", err);
+            });
     }
 
     toggleUploader() {
@@ -21,6 +33,19 @@ export default class App extends Component {
         this.setState({
             uploaderIsVisible: !this.state.uploaderIsVisible,
         });
+    }
+
+    profileImage(val) {
+        console.log("val in function", val);
+        this.setState({
+            imageUrl: val,
+        });
+
+        setTimeout(() => {
+            this.setState({
+                uploaderIsVisible: false,
+            });
+        }, 1000);
     }
 
     render() {
@@ -35,14 +60,17 @@ export default class App extends Component {
                     />
                     <ProfilePic
                         uploader={() => this.toggleUploader()}
-                        first="Isabela"
-                        last="Savastano"
-                        imageUrl=""
+                        first={this.state.first}
+                        last={this.state.last}
+                        imageUrl={this.state.imageUrl}
                     />
                 </header>
 
                 {this.state.uploaderIsVisible && (
-                    <Uploader uploader={() => this.toggleUploader()} />
+                    <Uploader
+                        profileImage={(val) => this.profileImage(val)}
+                        uploader={() => this.toggleUploader()}
+                    />
                 )}
             </>
         );

@@ -158,6 +158,19 @@ app.post("/password/reset", (req, res) => {
     });
 });
 
+app.get("/profile.json", (req, res) => {
+    const userId = req.session.userId;
+    db.getUserById(userId)
+        .then(({ rows }) => {
+            console.log("rows in get profile", rows);
+            return res.json(rows);
+        })
+        .catch((err) => {
+            console.log("error sending images to client: ", err);
+            return res.sendStatus(500);
+        });
+});
+
 app.post(
     "/profile/upload",
     uploader.single("file"),
@@ -166,8 +179,9 @@ app.post(
     (req, res) => {
         console.log("req.file", req.file);
         if (req.file) {
+            const userId = req.session.userId;
             const url = `https://s3.amazonaws.com/spicedling/${req.file.filename}`;
-            db.addProfilePic(url)
+            db.addProfilePic({ url, userId })
                 .then(({ rows }) => res.json(rows[0]))
                 .catch((err) => console.log("error on addProfilePic:", err));
         } else {

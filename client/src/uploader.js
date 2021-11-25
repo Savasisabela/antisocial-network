@@ -5,6 +5,7 @@ export default class Uploader extends Component {
         super(props);
         this.state = {
             bigFile: false,
+            imgUploaded: false,
         };
     }
 
@@ -24,8 +25,15 @@ export default class Uploader extends Component {
                 if (data.fileTooBig) {
                     this.setState({ bigFile: true });
                 } else {
-                    this.images.unshift(data); // update this line!!!!!!
-                    this.setState({ bigFile: false });
+                    console.log(
+                        "RECEIVED DATA after uploading",
+                        data["picture_url"]
+                    );
+                    this.setState({
+                        bigFile: false,
+                        imgUploaded: true,
+                    });
+                    this.props.profileImage(data["picture_url"]);
                 }
             })
 
@@ -49,6 +57,7 @@ export default class Uploader extends Component {
             <>
                 <div className="popup-uploader-bg">
                     <div className="popup-uploader">
+                        <button onClick={() => this.props.uploader()}>X</button>
                         <input
                             name="file"
                             type="file"
@@ -61,6 +70,13 @@ export default class Uploader extends Component {
                                 <p>
                                     <strong>
                                         File must be smaller than 2Mb
+                                    </strong>
+                                </p>
+                            )}
+                            {this.state.imgUploaded && (
+                                <p>
+                                    <strong>
+                                        Your image was successfully uploaded!
                                     </strong>
                                 </p>
                             )}
