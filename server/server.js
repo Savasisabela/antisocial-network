@@ -192,6 +192,22 @@ app.post(
     }
 );
 
+app.post("/bio/upload", (req, res) => {
+    console.log("req.body", req.body);
+    if (req.body) {
+        const userId = req.session.userId;
+        const bio = req.body.bio;
+        db.addBio({ bio, userId })
+            .then(() => res.json({ success: true }))
+            .catch((err) => console.log("error on addBio:", err));
+    } else {
+        console.log("problem getting bio on server side");
+        res.json({
+            success: false,
+        });
+    }
+});
+
 app.get("*", function (req, res) {
     res.sendFile(path.join(__dirname, "..", "client", "index.html"));
 });

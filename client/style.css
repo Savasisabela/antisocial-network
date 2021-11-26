@@ -19,7 +19,7 @@ body {
 header {
     display: flex;
     justify-content: space-between;
-    background-color: burlywood;
+    background-color: rgb(216, 161, 59);
 }
 
 h1 {
@@ -31,14 +31,44 @@ h1 {
     text-align: center;
 }
 
-.profilepic {
+.applogo,
+header .profilepic {
     height: 100px;
+    cursor: pointer;
+    margin: 20px;
+}
+
+header .profilepic {
+    width: 100px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: rgb(255, 123, 0) inset 5px;
+    margin-right: 50px;
+}
+
+.profile-container {
+    display: flex;
+    margin: 30px;
+}
+
+.profileimage {
+    width: 25%;
     cursor: pointer;
 }
 
+.profileimage img {
+    width: 100%;
+}
+
+.bio-text,
+.bio-edit,
+.bio-edit textarea {
+    width: 300px;
+    height: 200px;
+}
+
 .applogo {
-    height: 100px;
-    cursor: pointer;
+    margin-left: 40px;
 }
 
 .popup-uploader-bg {

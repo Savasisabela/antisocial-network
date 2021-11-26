@@ -1,6 +1,7 @@
 import { Component } from "react";
 import ProfilePic from "./profilepic";
 import Uploader from "./uploader";
+import Profile from "./profile";
 
 export default class App extends Component {
     constructor() {
@@ -21,6 +22,7 @@ export default class App extends Component {
                     first: data[0].first,
                     last: data[0].last,
                     imageUrl: data[0]["picture_url"],
+                    bioText: data[0].bio,
                 });
             })
             .catch((err) => {
@@ -65,7 +67,13 @@ export default class App extends Component {
                         imageUrl={this.state.imageUrl}
                     />
                 </header>
-
+                <Profile
+                    uploader={() => this.toggleUploader()}
+                    first={this.state.first}
+                    last={this.state.last}
+                    imageUrl={this.state.imageUrl}
+                    bioText={this.state.bioText}
+                />
                 {this.state.uploaderIsVisible && (
                     <Uploader
                         profileImage={(val) => this.profileImage(val)}
