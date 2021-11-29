@@ -46,6 +46,14 @@ header .profilepic {
     margin-right: 50px;
 }
 
+.profilepic,
+.users-result img {
+    filter: grayscale();
+    /* filter: hue-rotate(171deg) contrast(200%); */
+    /* transform: skew(34deg, 13deg); */
+    /* transform: matrix(1, 2, 3, 4, 5, 6); */
+}
+
 .profile-container {
     display: flex;
     margin: 30px;
@@ -69,6 +77,15 @@ header .profilepic {
 
 .applogo {
     margin-left: 40px;
+}
+
+.find-people {
+    margin: 30px;
+}
+
+.users-result-container {
+    display: flex;
+    justify-content: space-between;
 }
 
 .popup-uploader-bg {

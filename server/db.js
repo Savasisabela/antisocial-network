@@ -82,3 +82,24 @@ module.exports.addBio = ({ bio, userId }) => {
     const params = [bio, userId];
     return db.query(q, params);
 };
+
+module.exports.getUsersBySearch = (search, userId) => {
+    const q = `SELECT id, picture_url, first, last
+               FROM users
+               WHERE id != $2
+               AND (first ILIKE $1
+               OR last ILIKE $1 
+               OR CONCAT (first, ' ', last) ILIKE $1)                
+               ORDER BY id DESC
+               LIMIT 3`;
+    const params = [`${search}%`, userId];
+    return db.query(q, params);
+};
+
+module.exports.getNewUsers = () => {
+    const q = `SELECT id, picture_url, first, last
+               FROM users
+               ORDER BY id DESC
+               LIMIT 3`;
+    return db.query(q);
+};

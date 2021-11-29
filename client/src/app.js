@@ -2,6 +2,8 @@ import { Component } from "react";
 import ProfilePic from "./profilepic";
 import Uploader from "./uploader";
 import Profile from "./profile";
+import { BrowserRouter, Route } from "react-router-dom";
+import FindPeople from "./findpeople";
 
 export default class App extends Component {
     constructor() {
@@ -60,6 +62,12 @@ export default class App extends Component {
                         src="/logo.png"
                         alt="logo"
                     />
+                    <div>
+                        <a href="/find-people">Find People</a>
+                    </div>
+                    <div>
+                        <a href="/home">Find People</a>
+                    </div>
                     <ProfilePic
                         uploader={() => this.toggleUploader()}
                         first={this.state.first}
@@ -67,13 +75,24 @@ export default class App extends Component {
                         imageUrl={this.state.imageUrl}
                     />
                 </header>
-                <Profile
-                    uploader={() => this.toggleUploader()}
-                    first={this.state.first}
-                    last={this.state.last}
-                    imageUrl={this.state.imageUrl}
-                    bioText={this.state.bioText}
-                />
+                <BrowserRouter>
+                    <div className="find-people">
+                        <Route path="/find-people">
+                            <FindPeople />
+                        </Route>
+                    </div>
+                    <div>
+                        <Route exact path="/">
+                            <Profile
+                                uploader={() => this.toggleUploader()}
+                                first={this.state.first}
+                                last={this.state.last}
+                                imageUrl={this.state.imageUrl}
+                                bioText={this.state.bioText}
+                            />
+                        </Route>
+                    </div>
+                </BrowserRouter>
                 {this.state.uploaderIsVisible && (
                     <Uploader
                         profileImage={(val) => this.profileImage(val)}

@@ -158,6 +158,33 @@ app.post("/password/reset", (req, res) => {
     });
 });
 
+app.get("/newusers", (req, res) => {
+    db.getNewUsers()
+        .then(({ rows }) => {
+            console.log("rows in getNewUsers", rows);
+            return res.json(rows);
+        })
+        .catch((err) => {
+            console.log("error sending new users to client: ", err);
+            return res.sendStatus(500);
+        });
+});
+
+app.get("/finduser/:search", (req, res) => {
+    const { search } = req.params;
+    const userId = req.session.userId;
+    console.log("userId", userId);
+    db.getUsersBySearch(search, userId)
+        .then(({ rows }) => {
+            console.log("rows in getUsersBySearch", rows);
+            return res.json(rows);
+        })
+        .catch((err) => {
+            console.log("error sending users to client: ", err);
+            return res.sendStatus(500);
+        });
+});
+
 app.get("/profile.json", (req, res) => {
     const userId = req.session.userId;
     db.getUserById(userId)
