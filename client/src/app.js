@@ -4,6 +4,7 @@ import Uploader from "./uploader";
 import Profile from "./profile";
 import { BrowserRouter, Route } from "react-router-dom";
 import FindPeople from "./findpeople";
+import OtherProfile from "./otherprofile";
 
 export default class App extends Component {
     constructor() {
@@ -16,7 +17,7 @@ export default class App extends Component {
 
     componentDidMount() {
         console.log("App component mounted");
-        fetch("/profile.json")
+        fetch(`/api/user/${this.state.id}`)
             .then((data) => data.json())
             .then((data) => {
                 console.log("data in fetch profile", data[0]);
@@ -39,8 +40,14 @@ export default class App extends Component {
         });
     }
 
-    profileImage(val) {
+    newBioText(val) {
         console.log("val in function", val);
+        this.setState({
+            bioText: val,
+        });
+    }
+
+    profileImage(val) {
         this.setState({
             imageUrl: val,
         });
@@ -66,7 +73,7 @@ export default class App extends Component {
                         <a href="/find-people">Find People</a>
                     </div>
                     <div>
-                        <a href="/home">Find People</a>
+                        <a href="/">Home</a>
                     </div>
                     <ProfilePic
                         uploader={() => this.toggleUploader()}
@@ -84,6 +91,18 @@ export default class App extends Component {
                     <div>
                         <Route exact path="/">
                             <Profile
+                                uploader={() => this.toggleUploader()}
+                                first={this.state.first}
+                                last={this.state.last}
+                                imageUrl={this.state.imageUrl}
+                                bioText={this.state.bioText}
+                                newBioText={(val) => this.newBioText(val)}
+                            />
+                        </Route>
+                    </div>
+                    <div>
+                        <Route exact path="/user/:id">
+                            <OtherProfile
                                 uploader={() => this.toggleUploader()}
                                 first={this.state.first}
                                 last={this.state.last}

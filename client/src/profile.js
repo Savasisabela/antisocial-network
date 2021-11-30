@@ -1,7 +1,14 @@
 import ProfilePic from "./profilepic";
 import BioEditor from "./bioeditor";
 
-export default function Profile({ first, last, imageUrl, bioText, uploader }) {
+export default function Profile({
+    first,
+    last,
+    imageUrl,
+    bioText,
+    uploader,
+    newBioText,
+}) {
     console.log("bioText in Profile component", bioText);
     console.log("imageUrl in Profile component", imageUrl);
     return (
@@ -17,7 +24,7 @@ export default function Profile({ first, last, imageUrl, bioText, uploader }) {
                 </div>
             </div>
 
-            <BioEditor bioText={bioText} />
+            <BioEditor bioText={bioText} newBioText={newBioText} />
         </div>
     );
 }

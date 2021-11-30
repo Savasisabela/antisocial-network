@@ -1,16 +1,14 @@
-import { Component } from "react";
+import { useState, useEffect } from "react";
 
-export default class BioEditor extends Component {
-    constructor(props) {
-        super(props);
+export default function BioEditor({ bioText, newBioText }) {
+    const [editor, setEditor] = useState(false);
+    const [bio, setBio] = useState(bioText);
 
-        this.state = {
-            editorIsVisible: false,
-            bioText: this.props.bioText,
-        };
-    }
+    useEffect(() => {
+        setBio(bioText);
+    }, [bioText]);
 
-    uploadBio() {
+    const uploadBio = () => {
         console.log("amiga deu certo");
         fetch("/bio/upload", {
             method: "POST",
@@ -18,65 +16,51 @@ export default class BioEditor extends Component {
                 "content-type": "application/json",
             },
             body: JSON.stringify({
-                bio: this.state.bioText,
+                bio: bio,
             }),
         })
             .then((res) => res.json())
             .then((data) => {
                 if (data.success) {
                     console.log("SUCCESS uploading bio");
+                    newBioText(bio);
                 } else {
                     console.log("PROBLEM uploading bio");
                 }
             });
-    }
+    };
 
-    textareaToggle() {
-        this.setState({
-            editorIsVisible: !this.state.editorIsVisible,
-        });
-    }
+    const textareaToggle = () => setEditor(!editor);
 
-    handleChange(e) {
-        this.setState({
-            bioText: e.target.value,
-        });
-    }
+    const handleChange = (e) => setBio(e.target.value); // maybe reconsider for a cancel button (keeep the value in a draft)
 
-    render() {
-        const { editorIsVisible, bioText } = this.state;
-        return (
-            <div>
-                {!editorIsVisible && (
-                    <div className="bio-text">
-                        {bioText || this.props.bioText}
-                    </div>
-                )}
+    return (
+        <div>
+            {!editor && <div className="bio-text">{bio}</div>}
 
-                {editorIsVisible && (
-                    <div className="bio-edit">
-                        <textarea
-                            onChange={(e) => this.handleChange(e)}
-                            value={bioText || this.props.bioText}
-                        />
-                    </div>
-                )}
-
-                <div>
-                    <button
-                        onClick={() => {
-                            this.textareaToggle();
-                            {
-                                editorIsVisible && this.uploadBio();
-                            }
-                        }}
-                    >
-                        {!bioText && !editorIsVisible && "Add Bio"}
-                        {bioText && !editorIsVisible && "Edit Bio"}
-                        {editorIsVisible && "Save"}
-                    </button>
+            {editor && (
+                <div className="bio-edit">
+                    <textarea
+                        onChange={(e) => handleChange(e)}
+                        defaultValue={bio}
+                    />
                 </div>
+            )}
+
+            <div>
+                <button
+                    onClick={() => {
+                        textareaToggle();
+                        {
+                            editor && uploadBio();
+                        }
+                    }}
+                >
+                    {!bio && !editor && "Add Bio"}
+                    {bio && !editor && "Edit Bio"}
+                    {editor && "Save"}
+                </button>
             </div>
-        );
-    }
+        </div>
+    );
 }

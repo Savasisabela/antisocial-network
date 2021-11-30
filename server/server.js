@@ -185,16 +185,21 @@ app.get("/finduser/:search", (req, res) => {
         });
 });
 
-app.get("/profile.json", (req, res) => {
+app.get(`/api/user/:id`, (req, res) => {
     const userId = req.session.userId;
-    db.getUserById(userId)
+    const { id } = req.params;
+
+    db.getUserById(id === "undefined" ? userId : id)
         .then(({ rows }) => {
             console.log("rows in get profile", rows);
+            if (userId === id) {
+                return res.json({ ownId: true });
+            }
             return res.json(rows);
         })
         .catch((err) => {
             console.log("error sending images to client: ", err);
-            return res.sendStatus(500);
+            return res.json({ noId: true });
         });
 });
 
