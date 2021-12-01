@@ -7,13 +7,14 @@ export default function Welcome() {
     return (
         <>
             <BrowserRouter>
-                <div className="container">
-                    <div className="stack">
-                        <span className="zero">ANTI</span>
-                        <span className="one">ANTI</span>
-                        <span className="two">ANTI</span>
+                <section>
+                    <div className="hero-container">
+                        <div className="environment"></div>
+                        <h2 className="hero glitch layers" data-text="ANTI">
+                            <span>ANTI</span>
+                        </h2>
                     </div>
-                </div>
+                </section>
                 {/* <img src="/logo.png" alt="logo" /> */}
 
                 <div>
