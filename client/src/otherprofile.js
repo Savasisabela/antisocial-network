@@ -1,10 +1,10 @@
 import { useParams, useHistory } from "react-router";
 import { useEffect, useState } from "react";
+import FriendBtn from "./friendbtn";
 
 export default function OtherProfile() {
     const { id } = useParams();
     const history = useHistory();
-    console.log("history:", history);
 
     const [user, setUser] = useState({});
 
@@ -36,6 +36,7 @@ export default function OtherProfile() {
                 </div>
             </div>
             <div>{bio}</div>
+            <FriendBtn otherId={id}></FriendBtn>
         </div>
     );
 }

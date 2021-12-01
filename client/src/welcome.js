@@ -7,8 +7,15 @@ export default function Welcome() {
     return (
         <>
             <BrowserRouter>
-                <h1>WELCOME TO</h1>
-                <img src="/logo.png" alt="logo" />
+                <div className="container">
+                    <div className="stack">
+                        <span className="zero">ANTI</span>
+                        <span className="one">ANTI</span>
+                        <span className="two">ANTI</span>
+                    </div>
+                </div>
+                {/* <img src="/logo.png" alt="logo" /> */}
+
                 <div>
                     <Route exact path="/">
                         <Registration />

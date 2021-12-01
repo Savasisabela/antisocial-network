@@ -74,7 +74,6 @@ app.post("/registration.json", requireNotLoggedIn, (req, res) => {
         .then((hashedPw) => {
             db.addUser(first, last, email, hashedPw)
                 .then((data) => {
-                    console.log("data after addUser:", data);
                     req.session.userId = data.rows[0].id; // creating cookie from users table id row
                     return res.json({ success: true });
                 })
@@ -120,7 +119,6 @@ app.post("/password/getcode", (req, res) => {
     console.log("email", email);
     db.checkForUser(email)
         .then((data) => {
-            console.log("data", data);
             if (data.rows[0].count > 0) {
                 db.storeCode(email, code).then(() => {
                     sendEmail(
@@ -161,7 +159,6 @@ app.post("/password/reset", (req, res) => {
 app.get("/newusers", (req, res) => {
     db.getNewUsers()
         .then(({ rows }) => {
-            console.log("rows in getNewUsers", rows);
             return res.json(rows);
         })
         .catch((err) => {
@@ -176,7 +173,6 @@ app.get("/finduser/:search", (req, res) => {
     console.log("userId", userId);
     db.getUsersBySearch(search, userId)
         .then(({ rows }) => {
-            console.log("rows in getUsersBySearch", rows);
             return res.json(rows);
         })
         .catch((err) => {
@@ -191,7 +187,6 @@ app.get(`/api/user/:id`, (req, res) => {
 
     db.getUserById(id === "undefined" ? userId : id)
         .then(({ rows }) => {
-            console.log("rows in get profile", rows);
             if (userId === id) {
                 return res.json({ ownId: true });
             }
@@ -209,7 +204,6 @@ app.post(
     fileSizeLimitErrorHandler,
     s3.upload,
     (req, res) => {
-        console.log("req.file", req.file);
         if (req.file) {
             const userId = req.session.userId;
             const url = `https://s3.amazonaws.com/spicedling/${req.file.filename}`;
@@ -237,6 +231,68 @@ app.post("/bio/upload", (req, res) => {
         res.json({
             success: false,
         });
+    }
+});
+
+app.get(`/api/friendship/:id`, (req, res) => {
+    const otherId = req.params.id;
+    const ownId = req.session.userId;
+    db.friendshipStatus({ ownId, otherId })
+        .then(({ rows }) => {
+            console.log("rows", rows);
+            if (!rows.length) {
+                res.json({
+                    friendship: false,
+                    reqReceived: false,
+                    reqSent: false,
+                });
+            } else if (!rows[0].accepted && rows[0]["sender_id"] == ownId) {
+                res.json({
+                    friendship: false,
+                    reqReceived: false,
+                    reqSent: true,
+                });
+            } else if (!rows[0].accepted && rows[0]["sender_id"] == otherId) {
+                res.json({
+                    friendship: false,
+                    reqReceived: true,
+                    reqSent: false,
+                });
+            } else if (rows[0].accepted) {
+                res.json({
+                    friendship: true,
+                    reqReceived: false,
+                    reqSent: false,
+                });
+            } else {
+                res.json({
+                    problem: true,
+                });
+            }
+        })
+        .catch((err) => {
+            console.log("error getting friendship status", err);
+            res.json({ err: true });
+        });
+});
+
+app.post("/api/friendship", (req, res) => {
+    const { otherId, btnText } = req.body;
+    const ownId = req.session.userId;
+    if (btnText == "Send Friend Request") {
+        db.sendFriendRequest({ ownId, otherId })
+            .then(() => res.json({ reqSent: true }))
+            .catch((err) => console.log("err sendFriendRequest", err));
+    } else if (btnText == "Accept Friend Request") {
+        db.acceptFriendRequest({ ownId, otherId })
+            .then(() => res.json({ accepted: true }))
+            .catch((err) => console.log("err acceptFriendRequest", err));
+    } else if (btnText == "Cancel Friend Request" || btnText == "Unfriend") {
+        db.cancelFriendRequest({ ownId, otherId })
+            .then(() => res.json({ canceled: true }))
+            .catch((err) => console.log("err cancelFriendRequest", err));
+    } else {
+        res.json({ problem: true });
     }
 });
 
