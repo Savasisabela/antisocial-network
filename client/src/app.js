@@ -6,6 +6,17 @@ import { BrowserRouter, Route } from "react-router-dom";
 import FindPeople from "./findpeople";
 import OtherProfile from "./otherprofile";
 
+// import { reducer } from "./redux/reducer";
+
+// import { createStore, applyMiddleware } from "redux";
+// import * as immutableState from "redux-immutable-state-invariant";
+// import { composeWithDevTools } from "redux-devtools-extension";
+
+// const store = createStore(
+//     reducer,
+//     composeWithDevTools(applyMiddleware(immutableState.default()))
+// );
+
 export default class App extends Component {
     constructor() {
         super();
@@ -63,12 +74,13 @@ export default class App extends Component {
         return (
             <>
                 <header>
-                    <img
+                    {/* <img
                         className="applogo"
                         id="homepage-logo"
                         src="/logo.png"
                         alt="logo"
-                    />
+                    /> */}
+                    <div className="logo-header">ANTI</div>
                     <div>
                         <a href="/find-people">Find People</a>
                     </div>

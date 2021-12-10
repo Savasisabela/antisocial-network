@@ -1,12 +1,9 @@
 import { useState, useEffect } from "react";
 
 export default function BioEditor({ bioText, newBioText }) {
+    console.log("bioText before", bioText);
     const [editor, setEditor] = useState(false);
     const [bio, setBio] = useState(bioText);
-
-    useEffect(() => {
-        setBio(bioText);
-    }, [bioText]);
 
     const uploadBio = () => {
         console.log("amiga deu certo");
@@ -32,17 +29,19 @@ export default function BioEditor({ bioText, newBioText }) {
 
     const textareaToggle = () => setEditor(!editor);
 
-    const handleChange = (e) => setBio(e.target.value); // maybe reconsider for a cancel button (keeep the value in a draft)
+    const handleChange = (e) => setBio(e.target.value);
+
+    // const changeBio = () => setBio(draftBio);
 
     return (
         <div>
-            {!editor && <div className="bio-text">{bio}</div>}
+            {!editor && <div className="bio-text">{bioText}</div>}
 
             {editor && (
                 <div className="bio-edit">
                     <textarea
                         onChange={(e) => handleChange(e)}
-                        defaultValue={bio}
+                        defaultValue={bioText}
                     />
                 </div>
             )}
@@ -51,13 +50,14 @@ export default function BioEditor({ bioText, newBioText }) {
                 <button
                     onClick={() => {
                         textareaToggle();
+                        // changeBio();
                         {
                             editor && uploadBio();
                         }
                     }}
                 >
-                    {!bio && !editor && "Add Bio"}
-                    {bio && !editor && "Edit Bio"}
+                    {!bioText && !editor && "Add Bio"}
+                    {bioText && !editor && "Edit Bio"}
                     {editor && "Save"}
                 </button>
             </div>
